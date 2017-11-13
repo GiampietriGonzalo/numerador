@@ -1,0 +1,38 @@
+;Programa "enum".
+;
+;Objetivo: Enumera y muestra (o graba en un nuevo archivo)
+;las palabras contenidas en un archivo de texto. 
+;
+;Autor:Giampietri Gonzalo, Tomás Zárate.
+;
+;compilar:
+;	$ yasm -f elf numerar.asm
+;enlazar:
+;	$ ld -o numerar numerar.o
+;ejecutar:
+;	$ ./numerar [parametros]
+;-----------------------------------------------------------------------
+
+section .text
+	global _start 	
+	
+_start:
+	pop eax	; eax: cantidad de argumentos del programa.
+	pop ebx	; ebx: nombre del programa. Lo descartamos.
+	dec eax	; Se descarta el nombre del programa. 
+	
+	cmp eax,1
+	je unArg
+
+unArg:
+	pop ebx	; Tomo el argumento 
+	mov edx, [ebx]
+	cmp cl, '-'
+	je posibleAyuda
+
+posibleAyuda: 
+	
+	inc ebx			; Se saltea el '-'.
+	mov ecx, [ebx]
+	cmp cl, 'h'
+	je ayuda 	
