@@ -25,14 +25,17 @@ _start:
 	je unArg
 
 unArg:
-	pop ebx	; Tomo el argumento 
+	pop ebx	; Tomo el argumento .
 	mov edx, [ebx]
 	cmp cl, '-'
-	je posibleAyuda
+	je posibleAyuda ; Se ha leído "-", posible argumento de -h.
 
 posibleAyuda: 
 	
 	inc ebx			; Se saltea el '-'.
 	mov ecx, [ebx]
 	cmp cl, 'h'
-	je ayuda 	
+	je ayuda 		; Se ha inresado el argumento -h por consola.	
+
+ayuda:
+ayuda:
