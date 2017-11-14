@@ -12,23 +12,33 @@
 ;ejecutar:
 ;	$ ./numerar [parametros]
 ;-----------------------------------------------------------------------
+section .data 
+
+help	db "Aplicación que permite enumerar cada linea de texto de un archivo de text", 10,
+	db "Mostrar ayuda", 10,
+
+mHelp equ $-ayuda
+
+
+;-----------------------------------------------------------------------
 
 section .text
 	global _start 	
 	
-_start:
-	pop eax	; eax: cantidad de argumentos del programa.
+_start:	;Hacer push de eax y ebx, luego descartar en pila +3 o +4
+	pop eax	; eax: cantidad de argumentos.
 	pop ebx	; ebx: nombre del programa. Lo descartamos.
-	dec eax	; Se descarta el nombre del programa. 
-	
+	dec eax	; Se descarta el nombre del programa.
 	cmp eax,1
 	je unArg
+	jmp salidaError
 
 unArg:
-	pop ebx	; Tomo el argumento .
+	pop ebx			; Tomo el argumento .
 	mov edx, [ebx]
 	cmp cl, '-'
-	je posibleAyuda ; Se ha leído "-", posible argumento de -h.
+	je posibleAyuda 	; Se ha leído "-", posible argumento de -h.
+	
 
 posibleAyuda: 
 	
@@ -36,6 +46,23 @@ posibleAyuda:
 	mov ecx, [ebx]
 	cmp cl, 'h'
 	je ayuda 		; Se ha inresado el argumento -h por consola.	
+	jmp salidaError
 
 ayuda:
-ayuda:
+	mov eax, 4		; Se llama al servicio sys_write para mostrar
+	mov ebx, 0		; por consola la ayuda de la aplicación.	
+	mov ecx, help		
+	mov edx, mHelp		
+	int 80h	
+	jmp salidaExitosa		 
+
+salidaExitosa: 
+    	mov     eax, 1		; Se llama al servicio sys_exit.
+    	xor     ebx, ebx 	; Setea ebx en cero, no se produce error.
+    	int     80h
+
+salidaError:
+	mov eax,1
+	mov ebx,1
+	
+	int 80h
