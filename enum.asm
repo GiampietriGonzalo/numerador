@@ -6,7 +6,7 @@
 
 section .bss
 	
-	contadorString resb 4		; El contador tendrá 4 dígitos ya que el número máximo de líneas es 9999.
+	contadorChar resb 4		; El contador tendrá 4 dígitos ya que el número máximo de líneas es 9999.
 	buffer resb 1			; buffer donde se colocan todos los caracteres a escribir/imprimir.
 					
 	cantBuffer equ 1		; tamaño del buffer. 
@@ -26,14 +26,13 @@ section .bss
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~< DATOS INICIALIZADOS >~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 section .data 
 
 	contador dd 1		;contador lineas.
 	
 
 	limite	equ 9999	;Limite de lineas en el archivo de entrada. 
-	cantidadDigitos	equ 4	;Se lee hasta 999 líneas de un archivo ~> máximo digitos del contador de líneas = 3
+	cantidadDigitos	equ 4	;Se lee hasta 999 líneas de un archivo ~> máximo digitos del contador de líneas = 4
 	
 
 
@@ -52,8 +51,8 @@ section .data
 		db "	a- Se procede a enumerar las líneas contenidas en el archivo de entrada.", 10,
 		db "	b- Luego se escriben las líneas enumeradas en el archivo de salida.", 10,
 		db " ", 10,
-		db "AUTORES: Giampietri Gonzalo Emanuela & Tomás Zárate ", 10,
-    
+		db "AUTORES: Giampietri Gonzalo Emanuel & Tomás Zárate ", 10,
+    		db " ", 10,
 		
 	tHelp equ $-mHelp
 
@@ -228,10 +227,10 @@ pasarNumAChar:
 
 
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+;------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 obtenerASCII:
- ;ECX: cantidad de dígitos (4).
+; ECX: cantidad de dígitos (4).
 	xor EDX, EDX					; En EDX se almacenará el resto de la división de abajo
 	div EBX						; Divide a EAX por EBX(10). En EDX está el resto.
 	add EDX, 48					; Para obtener valor ascii.
@@ -401,13 +400,13 @@ escribir:
 agregarContador:
 ; Escribe el contador de la línea. Con dos puntos y espacio.		
 	
-	mov ESI, contadorString				
+	mov ESI, contadorChar				
 	mov EAX, [contador] 				; Para pasarNumAChar.
 	call pasarNumAChar
 
 	mov EAX, 4					; Usar sys_write para escribir el contador.
 	mov EBX, [salida]	
-	mov ECX, contadorString				; Límite de líneas 500
+	mov ECX, contadorChar				; Límite de líneas 500
 	mov EDX, cantidadDigitos			; 4 digitos. 
 	int 80h						; Servicio
  
@@ -422,17 +421,18 @@ agregarContador:
 
 agregarContadorSolo:
 ; Agrega el contrador de línea sin dos puntos y espacio.
+
 	mov EAX, [contador]				; contador--
 	dec EAX			
 	mov [contador], EAX
 
-	mov ESI, contadorString				
+	mov ESI, contadorChar				
 	mov EAX, [contador] 				; Para pasarNumAChar.
 	call pasarNumAChar
 
 	mov EAX, 4					; Usar sys_write para escribir el contador.
 	mov EBX, [salida]				; Si salida = 0 -> se escribe en consola, else se escribe en archSalida.
-	mov ECX, contadorString				; Límite de líneas 9999
+	mov ECX, contadorChar				; Límite de líneas 9999
 	mov EDX, cantidadDigitos			; 4 digitos. 
 	int 80h						; Llamada al  Servicio sys_write
 
